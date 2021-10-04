@@ -36,7 +36,7 @@ exit_read_array:
 ; Heap Sort
 mov eax, [n]
 sar eax, 1
-dec eax         ; i = n / 2 - 1
+dec eax         ; eax = n / 2 - 1
 heapSort_1:
     cmp eax, 0
     jl  exit_heapSort_1
@@ -61,9 +61,42 @@ heapSort_1:
     dec eax
 exit_heapSort_1:
 
-    
-    
+    mov eax, [n]
+    dec eax         ; i = n - 1
 
+heapSort_2:
+    cmp eax, 0
+    jl exit_heapSort_2
+    
+    mov esi, [array1]
+    mov edi, [array1 + 4 * eax]
+    
+    mov [array1], edi
+    mov [array1 + 4 * eax], esi
+    
+    mov [i], eax
+    mov ebx, [n]
+    mov [n], eax
+    
+    push dword eax
+    push dword ebx
+    push dword ecx
+    push dword edx
+    push dword esi
+    push dword edi
+    
+    call heapify
+    
+    pop dword edi
+    pop dword esi
+    pop dword edx
+    pop dword ecx
+    pop dword ebx
+    pop dword eax
+    
+    mov [n], ebx
+    dec eax
+exit_heapSort_2:
 ;-----------------------------------------------------------------------
 ;-----------------------------------------------------------------------
 ; вывод отсортированного массива
@@ -73,7 +106,7 @@ write_array:
     cmp esi, ecx
     je exit_write_array
 
-    mov eax, [array1 + 8 * esi]
+    mov eax, [array1 + 4 * esi]
 
     push eax
     push dword frmt_p
