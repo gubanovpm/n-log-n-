@@ -6,6 +6,7 @@ extern printf
 
 section .text
 main:
+    mov ebp, esp; for correct debugging
 ;-----------------------------------------------------------------------
 ; считывание размера массива
 push dword n
@@ -113,7 +114,7 @@ write_array:
     call printf
     add esp, 8
 
-    inc rsi
+    inc esi
 exit_write_array:
 ; конец вывода отсортированного массива
 ;-----------------------------------------------------------------------
@@ -177,10 +178,12 @@ exit_heapify:
 section .data
 frmt_s : db '%d', 0
 frmt_p : db '%d ', 0
-array1 resd 255
-array2 resd 255
     
 a dd 0
 b dd 0
 i dd 0
 n dd 0
+
+section .bss
+array1 resd 255
+array2 resd 255
