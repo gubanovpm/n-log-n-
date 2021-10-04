@@ -33,8 +33,35 @@ exit_read_array:
 ; конец считывания массива
 ;-----------------------------------------------------------------------
 ;-----------------------------------------------------------------------
+; Heap Sort
+mov eax, [n]
+sar eax, 1
+dec eax         ; i = n / 2 - 1
+heapSort_1:
+    cmp eax, 0
+    jl  exit_heapSort_1
+    
+    mov [i], eax
+    push dword eax
+    push dword ebx
+    push dword ecx
+    push dword edx
+    push dword esi
+    push dword edi
+    
+    call heapify
+    
+    pop dword edi
+    pop dword esi
+    pop dword edx
+    pop dword ecx
+    pop dword ebx
+    pop dword eax
+    
+    dec eax
+exit_heapSort_1:
 
-heapSort:    
+    
     
 
 ;-----------------------------------------------------------------------
