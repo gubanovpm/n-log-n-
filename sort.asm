@@ -1,12 +1,30 @@
-global main
+;%include "io.inc"
+
+global _start
 
 extern exit
 extern scanf
 extern printf
+        
+section .data
+frmt_s : db '%d', 0
+frmt_p : db '%d ', 0
+        
+a dd 0
+b dd 0
+i dd 0
+n dd 0
+
+section .bss
+
+array1 resd 255
 
 section .text
-main:
+_start:
     mov ebp, esp; for correct debugging
+    push ebp
+    
+    xor eax, eax
 ;-----------------------------------------------------------------------
 ; считывание размера массива
 push dword n
@@ -43,23 +61,24 @@ heapSort_1:
     jl  exit_heapSort_1
     
     mov [i], eax
-    push dword eax
-    push dword ebx
-    push dword ecx
-    push dword edx
-    push dword esi
-    push dword edi
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
     
     call heapify
     
-    pop dword edi
-    pop dword esi
-    pop dword edx
-    pop dword ecx
-    pop dword ebx
-    pop dword eax
+    pop edi
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+    pop eax
     
     dec eax
+    jmp heapSort_1
 exit_heapSort_1:
 
     mov eax, [n]
@@ -67,7 +86,7 @@ exit_heapSort_1:
 
 heapSort_2:
     cmp eax, 0
-    jl exit_heapSort_2
+    jl exit_heapSort_2  
     
     mov esi, [array1]
     mov edi, [array1 + 4 * eax]
@@ -75,28 +94,29 @@ heapSort_2:
     mov [array1], edi
     mov [array1 + 4 * eax], esi
     
-    mov [i], eax
+    mov [i], dword 0h
     mov ebx, [n]
     mov [n], eax
     
-    push dword eax
-    push dword ebx
-    push dword ecx
-    push dword edx
-    push dword esi
-    push dword edi
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
+    push edi
     
     call heapify
     
-    pop dword edi
-    pop dword esi
-    pop dword edx
-    pop dword ecx
-    pop dword ebx
-    pop dword eax
+    pop edi
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+    pop eax
     
     mov [n], ebx
     dec eax
+    jmp heapSort_2
 exit_heapSort_2:
 ;-----------------------------------------------------------------------
 ;-----------------------------------------------------------------------
@@ -120,19 +140,20 @@ exit_write_array:
 ;-----------------------------------------------------------------------
 push dword 0
 call exit
-
+    pop ebp
+    xor eax, eax
 ret
 ;-----------------------------------------------------------------------
 heapify:
 
-    mov eax, [i]    ; rax = largest
+    mov eax, [i]    ; eax = largest
 
     mov esi, [i]
     sal esi, 1
-    inc esi         ; rsi - left
+    inc esi         ; esi - left
     mov edi, [i]
     sal edi, 1
-    add edi, 2      ; rdi - right
+    add edi, 2      ; edi - right
 
     cmp esi, [n]
     jge heapify_1
@@ -165,25 +186,17 @@ heapify_2:
     mov esi, [array1 + 4 * eax]     ; esi = array1[largest]
     ; swap(array1[i], arr1[largest])
     mov [array1 + 4 * ecx], esi
-    mov [array1 + 4 * eax], edx
+    mov [array1 + 4 * eax], edi
+    
+    mov ecx, [i]
+    push ecx
     
     mov [i], eax
     call heapify
+    
+    pop ecx
+    mov [i], ecx
 
 exit_heapify:
     ret
-        
-    
 
-section .data
-frmt_s : db '%d', 0
-frmt_p : db '%d ', 0
-    
-a dd 0
-b dd 0
-i dd 0
-n dd 0
-
-section .bss
-array1 resd 255
-array2 resd 255
